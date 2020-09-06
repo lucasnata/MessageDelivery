@@ -1,26 +1,21 @@
-package br.com.luiza.labs.messagedeliveryspring.domain.entities;
+package br.com.luiza.labs.messagedeliveryspring.app.dtos;
 
 import br.com.luiza.labs.messagedeliveryspring.domain.vos.MessageType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Calendar;
-import java.util.UUID;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Message {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+public class MessageDTO {
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
     private Calendar dateTimeSchedule;
 
     @NotNull
@@ -29,6 +24,5 @@ public class Message {
     @NotNull
     private String message;
 
-    @Enumerated(EnumType.STRING)
     private MessageType messageType;
 }
