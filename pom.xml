@@ -15,7 +15,7 @@
     <description>Desafio Luiza Labs</description>
 
     <properties>
-        <java.version>14</java.version>
+        <java.version>13</java.version>
     </properties>
 
     <dependencies>
@@ -30,6 +30,11 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -51,7 +56,32 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>junit</groupId>-->
+<!--            <artifactId>junit</artifactId>-->
+<!--            <version>4.13</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>test</id>
+            <properties>
+                <project.profile>test</project.profile>
+            </properties>
+        </profile>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>develop</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <project.profile>develop</project.profile>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>

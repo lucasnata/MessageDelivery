@@ -1,10 +1,7 @@
 package br.com.luiza.labs.messagedeliveryspring.app.dtos;
 
 import br.com.luiza.labs.messagedeliveryspring.domain.vos.MessageType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.Calendar;
@@ -13,6 +10,7 @@ import java.util.Calendar;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class MessageDTO {
 
     @NotNull
