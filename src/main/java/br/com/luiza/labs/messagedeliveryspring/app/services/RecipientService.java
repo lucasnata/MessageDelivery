@@ -28,9 +28,6 @@ public class RecipientService {
     }
 
     private Recipient instanceOfRecipient(String contact, MessageType type) {
-        Recipient recipient = new Recipient();
-        recipient.setContact(contact);
-        recipient.setType(type);
-        return recipient;
+        return new Recipient(contact, type);
     }
 }

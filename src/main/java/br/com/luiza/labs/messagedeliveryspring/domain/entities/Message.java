@@ -7,6 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -20,8 +21,8 @@ import java.util.UUID;
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private BigInteger id;
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
@@ -50,4 +51,13 @@ public class Message {
 
     @Column(name = "modified_at")
     private Calendar modifiedAt;
+
+    public Message(@NotNull Calendar dateTimeSchedule, @NotNull Recipient recipient, @NotNull String message, @NotNull MessageType messageType, @NotNull MessageStatus messageStatus, Calendar createdAt) {
+        this.dateTimeSchedule = dateTimeSchedule;
+        this.recipient = recipient;
+        this.message = message;
+        this.messageType = messageType;
+        this.messageStatus = messageStatus;
+        this.createdAt = createdAt;
+    }
 }
