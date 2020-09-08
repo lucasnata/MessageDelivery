@@ -9,6 +9,7 @@ import java.util.Calendar;
 
 @NoArgsConstructor
 @Getter
+@Builder
 public class MessageDTO {
 
     @NotNull(message = "Entre com uma data valida")

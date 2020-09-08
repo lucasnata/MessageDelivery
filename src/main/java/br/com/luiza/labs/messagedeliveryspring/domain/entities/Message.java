@@ -15,7 +15,6 @@ import java.util.Calendar;
 @NoArgsConstructor
 @Getter
 @Builder
-@Setter
 @Table(name = "messages")
 public class Message {
 
@@ -42,6 +41,7 @@ public class Message {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Setter
     private MessageStatus messageStatus;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
@@ -50,13 +50,4 @@ public class Message {
 
     @Column(name = "modified_at")
     private Calendar modifiedAt;
-
-    public Message(@NotNull Calendar dateTimeSchedule, @NotNull Recipient recipient, @NotNull String message, @NotNull MessageType messageType, @NotNull MessageStatus messageStatus, Calendar createdAt) {
-        this.dateTimeSchedule = dateTimeSchedule;
-        this.recipient = recipient;
-        this.message = message;
-        this.messageType = messageType;
-        this.messageStatus = messageStatus;
-        this.createdAt = createdAt;
-    }
 }

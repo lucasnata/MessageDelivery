@@ -12,14 +12,14 @@ import java.util.Optional;
 
 public class MessageMapper {
     public static Message messageDTOtoEntity(MessageDTO messageDTO, Recipient recipient) {
-        return new Message(
-                messageDTO.getDateTimeSchedule(),
-                recipient,
-                messageDTO.getMessage(),
-                messageDTO.getMessageType(),
-                MessageStatus.SCHEDULED,
-                Calendar.getInstance()
-        );
+        return Message.builder()
+                .dateTimeSchedule(messageDTO.getDateTimeSchedule())
+                .recipient(recipient)
+                .message(messageDTO.getMessage())
+                .messageType(messageDTO.getMessageType())
+                .messageStatus(MessageStatus.SCHEDULED)
+                .createdAt(Calendar.getInstance())
+                .build();
     }
 
     public static MessageDTO messageEntitytoDTO(Message message) {

@@ -7,6 +7,7 @@ import br.com.luiza.labs.messagedeliveryspring.app.services.MessageService;
 import br.com.luiza.labs.messagedeliveryspring.app.services.RecipientService;
 import br.com.luiza.labs.messagedeliveryspring.domain.entities.Message;
 import io.swagger.annotations.Api;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping("/message")
 @Api(tags="Message Controller")
+@AllArgsConstructor
 public class MessageController extends GenericController{
 
     @Autowired
@@ -33,11 +35,13 @@ public class MessageController extends GenericController{
     @Autowired
     RecipientService recipientService;
 
+    static final String PATH = "/message";
+
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageStatusDTO> addMessage(@RequestBody @Valid MessageDTO messageDTO, UriComponentsBuilder uriComponentsBuilder) {
         return messageService.addMessage(messageDTO)
             .map(m -> MessageMapper.messageEntitytoMessageStatusDTO(m))
-            .map(m -> this.componentBuilder(uriComponentsBuilder, m.getId(), "/message/{id}/status"))
+            .map(m -> this.componentBuilder(uriComponentsBuilder, m.getId(), PATH+"/{id}/status"))
             .map(uri -> this.createdResponse(uri))
             .orElseGet(this::badRequestResponse);
     }
