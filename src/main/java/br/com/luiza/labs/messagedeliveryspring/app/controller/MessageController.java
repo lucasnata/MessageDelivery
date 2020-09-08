@@ -6,11 +6,13 @@ import br.com.luiza.labs.messagedeliveryspring.app.mappers.MessageMapper;
 import br.com.luiza.labs.messagedeliveryspring.app.services.MessageService;
 import br.com.luiza.labs.messagedeliveryspring.app.services.RecipientService;
 import br.com.luiza.labs.messagedeliveryspring.domain.entities.Message;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.math.BigInteger;
@@ -18,8 +20,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequestMapping("/message")
+@Api(tags="Message Controller")
 public class MessageController extends GenericController{
 
     @Autowired
@@ -28,15 +33,16 @@ public class MessageController extends GenericController{
     @Autowired
     RecipientService recipientService;
 
-    private final String JSON = MediaType.APPLICATION_JSON_VALUE;
-
-    @PostMapping(produces = JSON, consumes = JSON)
-    public ResponseEntity<MessageDTO> addMessage(@RequestBody @Valid MessageDTO messageDTO) {
-        Optional<Message> message = messageService.addMessage(messageDTO);
-        return new ResponseEntity<>(MessageMapper.messageEntitytoDTO(message), HttpStatus.CREATED);
+    @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageStatusDTO> addMessage(@RequestBody @Valid MessageDTO messageDTO, UriComponentsBuilder uriComponentsBuilder) {
+        return messageService.addMessage(messageDTO)
+            .map(m -> MessageMapper.messageEntitytoMessageStatusDTO(m))
+            .map(m -> this.componentBuilder(uriComponentsBuilder, m.getId(), "/message/{id}/status"))
+            .map(uri -> this.createdResponse(uri))
+            .orElseGet(this::badRequestResponse);
     }
 
-    @GetMapping(produces = JSON, value = "/{id}/status")
+    @GetMapping(produces = APPLICATION_JSON_VALUE, value = "/{id}/status")
     public ResponseEntity<MessageStatusDTO> getMenssage(@PathVariable BigInteger id) {
         return messageService.getMessage(id)
                 .map(m -> MessageMapper.messageEntitytoMessageStatusDTO(m))
@@ -52,9 +58,9 @@ public class MessageController extends GenericController{
                 .orElseGet(this::notFoundResponse);
     }
 
-    @GetMapping(produces = JSON)
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     public List<MessageDTO> getMessages() {
         return messageService.getMessages().stream()
-                .map(m -> MessageMapper.messageEntitytoDTO(Optional.of(m))).collect(Collectors.toList());
+                .map(m -> MessageMapper.messageEntitytoDTO(m)).collect(Collectors.toList());
     }
 }

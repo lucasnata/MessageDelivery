@@ -9,15 +9,14 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 import java.util.Calendar;
-import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 @Setter
 @Table(name = "messages")
-@ToString
 public class Message {
 
     @Id

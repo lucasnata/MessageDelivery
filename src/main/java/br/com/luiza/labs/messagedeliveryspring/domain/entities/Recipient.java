@@ -2,19 +2,20 @@ package br.com.luiza.labs.messagedeliveryspring.domain.entities;
 
 import br.com.luiza.labs.messagedeliveryspring.domain.vos.MessageType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
-import java.util.UUID;
 
 @Entity
 @Table(name = "recipients")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
+@Builder
 public class Recipient {
 
     @Id

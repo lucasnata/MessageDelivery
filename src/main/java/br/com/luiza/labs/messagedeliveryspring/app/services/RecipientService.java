@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RecipientService {
 
     @Autowired

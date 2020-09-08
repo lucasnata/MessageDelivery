@@ -31,11 +31,6 @@ public class MessageMapper {
         );
     }
 
-    public static MessageDTO messageEntitytoDTO(Optional<Message> messageOptional) {
-        return messageEntitytoDTO(messageOptional.get());
-    }
-
-
     public static MessageStatusDTO messageEntitytoMessageStatusDTO(Message message) {
         return new MessageStatusDTO(message.getId(), message.getMessageStatus());
     }
