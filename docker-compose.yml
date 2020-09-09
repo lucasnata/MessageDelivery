@@ -11,27 +11,18 @@ services:
       - 3306:3306
     expose:
       - 3306
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  message-delivery:
+    image: lucasnata/message-delivery
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/message_db?autoReconnect=true&useSSL=false
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
 volumes:
   db:
-
-#version: '3'
-#services:
-#  db:
-#    image: mysql:5.7
-#    environment:
-#      MYSQL_DATABASE: 'message_db'
-#      MYSQL_USER: 'labs'
-#      MYSQL_PASSWORD: 'password'
-#      MYSQL_ROOT_PASSWORD: 'password'
-#    ports:
-#      - 3306:3306
-#  message-delivery:
-#    image: lucasnata/message-delivery
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/message_db?autoReconnect=true&useSSL=false
-#    ports:
-#      - 8080:8080
-#    depends_on:
-#      - db
-#volumes:
-#  db:

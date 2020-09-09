@@ -19,7 +19,7 @@ import java.util.Calendar;
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private BigInteger id;
 
     @NotNull

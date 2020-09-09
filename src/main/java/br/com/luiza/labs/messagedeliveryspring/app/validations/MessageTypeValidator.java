@@ -5,10 +5,10 @@ import br.com.luiza.labs.messagedeliveryspring.domain.vos.MessageType;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class MessageTypeValidator implements ConstraintValidator<MessageTypeValidation, String> {
+public class MessageTypeValidator implements ConstraintValidator<MessageTypeValidation, Enum<MessageType>> {
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(Enum<MessageType> value, ConstraintValidatorContext context) {
         for (MessageType mt: MessageType.values()) {
             if (mt.name().equals(value)) {
                 return true;

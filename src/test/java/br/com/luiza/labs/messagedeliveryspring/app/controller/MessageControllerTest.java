@@ -21,32 +21,59 @@ public class MessageControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private static final String body = "{\n" +
+            "    \"dateTimeSchedule\": \"2020-09-06T02:10:43.511Z\",\n" +
+            "    \"recipient\": \"email@email.com\",\n" +
+            "    \"message\": \"TESTE MENSAGEM\",\n" +
+            "    \"messageType\": \"EMAIL\"\n" +
+            "}";
+
     @Test
     void shouldAddMessageAndGetResponseOKAndGetLocation() throws Exception {
-        this.addMessage().andExpect(status().isCreated());
+        this.addMessage(body).andExpect(status().isCreated());
     }
 
     @Test
-    void shouldGetMessageStatus() throws Exception {
-        this.addMessage();
-        this.mockMvc.perform(get("/message/2/status")).andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldDeleteMessage() throws Exception {
-        this.addMessage();
-        this.mockMvc.perform(delete("/message/2")).andExpect(status().isOk());
-    }
-
-    private ResultActions addMessage() throws Exception {
-
-        String body = "{\n" +
+    void shoulAddMessageWithWrongRecipient() throws Exception {
+        final String bodyRecipientWrong = "{\n" +
                 "    \"dateTimeSchedule\": \"2020-09-06T02:10:43.511Z\",\n" +
                 "    \"recipient\": \"contato\",\n" +
                 "    \"message\": \"TESTE MENSAGEM\",\n" +
                 "    \"messageType\": \"EMAIL\"\n" +
                 "}";
+        this.addMessage(bodyRecipientWrong).andExpect(status().is4xxClientError());
+    }
 
+    @Test
+    void shouldAddMessage() throws Exception {
+        final String bodyMessageTypeWrong = "{\n" +
+                "    \"dateTimeSchedule\": \"2020-09-06T02:10:43.511Z\",\n" +
+                "    \"recipient\": \"contato\",\n" +
+                "    \"message\": \"TESTE MENSAGEM\",\n" +
+                "    \"messageType\": \"ZAPZAP\"\n" +
+                "}";
+        this.addMessage(bodyMessageTypeWrong).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void shouldGetMessageStatus() throws Exception {
+        this.addMessage(body);
+        this.mockMvc.perform(get("/message/2/status")).andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldGetMessageStatusWithWrongParam() throws Exception {
+        this.addMessage(body);
+        this.mockMvc.perform(get("/message/a/status")).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void shouldDeleteMessage() throws Exception {
+        this.addMessage(body);
+        this.mockMvc.perform(delete("/message/2")).andExpect(status().isOk());
+    }
+
+    private ResultActions addMessage(String body) throws Exception {
         return this.mockMvc.perform(
                 post("/message")
                         .contentType(APPLICATION_JSON_VALUE)

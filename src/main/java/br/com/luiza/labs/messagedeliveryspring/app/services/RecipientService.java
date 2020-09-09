@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class RecipientService {
+public class RecipientService implements IRecipientService{
 
     @Autowired
     RecipientRepository recipientRepository;

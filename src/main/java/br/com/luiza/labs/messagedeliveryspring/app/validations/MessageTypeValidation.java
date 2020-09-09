@@ -15,7 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface MessageTypeValidation {
 
-    String message() default "{MessageTypeValidation.invalid}";
+    String message() default "{MessageType.invalid}";
 
     Class<?>[] groups() default { };
 

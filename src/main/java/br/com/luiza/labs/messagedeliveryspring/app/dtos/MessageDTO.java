@@ -22,9 +22,9 @@ public class MessageDTO {
     private String message;
 
     @NotNull(message = "Entre com um tipo valido")
-    private MessageType messageType;
+    private String messageType;
 
-    public MessageDTO(@NotNull(message = "Entre com uma data valida") Calendar dateTimeSchedule, @NotBlank String recipient, @NotBlank String message, @NotNull(message = "Entre com um tipo valido") MessageType messageType) {
+    public MessageDTO(@NotNull(message = "Entre com uma data valida") Calendar dateTimeSchedule, @NotBlank String recipient, @NotBlank String message, @NotNull(message = "Entre com um tipo valido") String messageType) {
         this.dateTimeSchedule = dateTimeSchedule;
         this.recipient = recipient;
         this.message = message;

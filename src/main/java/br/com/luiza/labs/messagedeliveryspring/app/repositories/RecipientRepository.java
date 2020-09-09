@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigInteger;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface RecipientRepository extends JpaRepository<Recipient, BigInteger> {
     Optional<Recipient> findByContact(String contact);

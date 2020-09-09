@@ -5,22 +5,20 @@ import br.com.luiza.labs.messagedeliveryspring.app.mappers.MessageMapper;
 import br.com.luiza.labs.messagedeliveryspring.app.repositories.MessageRepository;
 import br.com.luiza.labs.messagedeliveryspring.domain.entities.Message;
 import br.com.luiza.labs.messagedeliveryspring.domain.vos.MessageStatus;
+import br.com.luiza.labs.messagedeliveryspring.domain.vos.MessageType;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.DoubleStream;
 
 @Service
 @Transactional
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class MessageService {
+public class MessageService implements IMessageService{
 
     @Autowired
     MessageRepository messageRepository;
@@ -28,11 +26,16 @@ public class MessageService {
     @Autowired
     RecipientService recipientService;
 
+    @Autowired
+    RabbitMQSender rabbitMQSender;
+
     public Optional<Message> addMessage(final MessageDTO messageDTO) {
-        return recipientService
-                .addRecipient(messageDTO.getRecipient(), messageDTO.getMessageType())
+        Optional<Message> optMessage = recipientService
+                .addRecipient(messageDTO.getRecipient(), MessageType.valueOf(messageDTO.getMessageType()))
                 .map(recipient -> MessageMapper.messageDTOtoEntity(messageDTO, recipient))
                 .map(this.messageRepository::save);
+        this.rabbitMQSender.send(optMessage.get());
+        return optMessage;
     }
 
     public List<Message> getMessages() {
@@ -44,8 +47,13 @@ public class MessageService {
     }
 
     public Optional<Message> deleteMessage(final BigInteger id) {
-        return messageRepository.findById(id)
-            .map(message -> {message.setMessageStatus(MessageStatus.DELETED); return message;})
-            .map(messageRepository::save);
+        Optional<Message> optMessage = messageRepository.findById(id)
+                .map(message -> {
+                    message.setMessageStatus(MessageStatus.DELETED);
+                    return message;
+                })
+                .map(messageRepository::save);
+        this.rabbitMQSender.send(optMessage.get());
+        return optMessage;
     }
 }

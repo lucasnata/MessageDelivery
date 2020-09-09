@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ class MessageServiceTest {
     MessageRepository messageRepository;
     RecipientService recipientService;
     MessageService messageService;
+    RabbitMQSender rabbitMQSender;
 
     final String email = "meu@email.com";
     final BigInteger id = new BigInteger("2");
@@ -34,14 +36,14 @@ class MessageServiceTest {
     void setUp() {
         this.messageRepository = spy(MessageRepository.class);
         this.recipientService = mock(RecipientService.class);
-        this.messageService = new MessageService(this.messageRepository, this.recipientService);
+        this.messageService = new MessageService(this.messageRepository, this.recipientService, this.rabbitMQSender);
     }
 
     @Test
     void shouldAddMessageAndReturnId() {
         when(this.recipientService.addRecipient(email, MessageType.EMAIL)).thenReturn(Optional.of(Recipient.builder().contact(email).build()));
         when(this.messageRepository.save(any(Message.class))).thenReturn(Message.builder().id(id).build());
-        Message message = this.messageService.addMessage(MessageDTO.builder().recipient(email).messageType(MessageType.EMAIL).build()).get();
+        Message message = this.messageService.addMessage(MessageDTO.builder().recipient(email).messageType(MessageType.EMAIL.name()).build()).get();
         verify(this.messageRepository, Mockito.times(1)).save(any(Message.class));
         assertEquals(message.getId(), id);
     }

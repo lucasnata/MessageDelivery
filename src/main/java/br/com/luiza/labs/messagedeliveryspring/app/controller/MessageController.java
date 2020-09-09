@@ -3,22 +3,20 @@ package br.com.luiza.labs.messagedeliveryspring.app.controller;
 import br.com.luiza.labs.messagedeliveryspring.app.dtos.MessageDTO;
 import br.com.luiza.labs.messagedeliveryspring.app.dtos.MessageStatusDTO;
 import br.com.luiza.labs.messagedeliveryspring.app.mappers.MessageMapper;
-import br.com.luiza.labs.messagedeliveryspring.app.services.MessageService;
-import br.com.luiza.labs.messagedeliveryspring.app.services.RecipientService;
-import br.com.luiza.labs.messagedeliveryspring.domain.entities.Message;
+import br.com.luiza.labs.messagedeliveryspring.app.services.IMessageService;
+import br.com.luiza.labs.messagedeliveryspring.app.services.IRecipientService;
+import br.com.luiza.labs.messagedeliveryspring.app.validations.*;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -30,24 +28,29 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class MessageController extends GenericController{
 
     @Autowired
-    MessageService messageService;
+    IMessageService messageService;
 
     @Autowired
-    RecipientService recipientService;
+    IRecipientService recipientService;
 
     static final String PATH = "/message";
 
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageStatusDTO> addMessage(@RequestBody @Valid MessageDTO messageDTO, UriComponentsBuilder uriComponentsBuilder) {
-        return messageService.addMessage(messageDTO)
-            .map(m -> MessageMapper.messageEntitytoMessageStatusDTO(m))
-            .map(m -> this.componentBuilder(uriComponentsBuilder, m.getId(), PATH+"/{id}/status"))
-            .map(uri -> this.createdResponse(uri))
-            .orElseGet(this::badRequestResponse);
+    public ResponseEntity<Serializable> addMessage(@RequestBody @Valid MessageDTO messageDTO, UriComponentsBuilder uriComponentsBuilder) {
+        ValidationFactory validationFactory = new ValidationFactory(messageDTO);
+        if (validationFactory.haveNoErrors()) {
+            return messageService.addMessage(messageDTO)
+                    .map(m -> MessageMapper.messageEntitytoMessageStatusDTO(m))
+                    .map(m -> this.componentBuilder(uriComponentsBuilder, m.getId(), PATH+"/{id}/status"))
+                    .map(uri -> this.createdResponse(uri))
+                    .orElseGet(this::badRequestResponse);
+        } else {
+            return this.badRequestResponse(validationFactory.getErrors());
+        }
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE, value = "/{id}/status")
-    public ResponseEntity<MessageStatusDTO> getMenssage(@PathVariable BigInteger id) {
+    public ResponseEntity<MessageStatusDTO> getMessage(@PathVariable BigInteger id) {
         return messageService.getMessage(id)
                 .map(m -> MessageMapper.messageEntitytoMessageStatusDTO(m))
                 .map(this::okResponse)
