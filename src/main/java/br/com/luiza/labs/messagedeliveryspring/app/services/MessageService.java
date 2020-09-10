@@ -20,14 +20,9 @@ import java.util.Optional;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class MessageService implements IMessageService{
 
-    @Autowired
-    MessageRepository messageRepository;
-
-    @Autowired
-    RecipientService recipientService;
-
-    @Autowired
-    RabbitMQSender rabbitMQSender;
+    private final MessageRepository messageRepository;
+    private final IRecipientService recipientService;
+    private final IRabbitMQSender rabbitMQSender;
 
     public Optional<Message> addMessage(final MessageDTO messageDTO) {
         Optional<Message> optMessage = recipientService

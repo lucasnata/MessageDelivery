@@ -4,11 +4,9 @@ import br.com.luiza.labs.messagedeliveryspring.app.dtos.MessageDTO;
 import br.com.luiza.labs.messagedeliveryspring.app.dtos.MessageStatusDTO;
 import br.com.luiza.labs.messagedeliveryspring.app.mappers.MessageMapper;
 import br.com.luiza.labs.messagedeliveryspring.app.services.IMessageService;
-import br.com.luiza.labs.messagedeliveryspring.app.services.IRecipientService;
 import br.com.luiza.labs.messagedeliveryspring.app.validations.*;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,25 +25,21 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @AllArgsConstructor
 public class MessageController extends GenericController{
 
-    @Autowired
-    IMessageService messageService;
-
-    @Autowired
-    IRecipientService recipientService;
+    private final IMessageService messageService;
 
     static final String PATH = "/message";
 
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<Serializable> addMessage(@RequestBody @Valid MessageDTO messageDTO, UriComponentsBuilder uriComponentsBuilder) {
-        ValidationFactory validationFactory = new ValidationFactory(messageDTO);
-        if (validationFactory.haveNoErrors()) {
+        MessageValidation messageValidation = new MessageValidation(messageDTO);
+        if (messageValidation.haveNoErrors()) {
             return messageService.addMessage(messageDTO)
                     .map(m -> MessageMapper.messageEntitytoMessageStatusDTO(m))
                     .map(m -> this.componentBuilder(uriComponentsBuilder, m.getId(), PATH+"/{id}/status"))
                     .map(uri -> this.createdResponse(uri))
                     .orElseGet(this::badRequestResponse);
         } else {
-            return this.badRequestResponse(validationFactory.getErrors());
+            return this.badRequestResponse(messageValidation.getErrors());
         }
     }
 

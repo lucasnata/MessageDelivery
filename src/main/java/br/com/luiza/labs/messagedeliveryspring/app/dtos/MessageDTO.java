@@ -1,6 +1,5 @@
 package br.com.luiza.labs.messagedeliveryspring.app.dtos;
 
-import br.com.luiza.labs.messagedeliveryspring.domain.vos.MessageType;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;

@@ -15,8 +15,7 @@ import java.util.Optional;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RecipientService implements IRecipientService{
 
-    @Autowired
-    RecipientRepository recipientRepository;
+    private final RecipientRepository recipientRepository;
 
     public Optional<Recipient> addRecipient(String contact, MessageType type){
         return this.recipientRepository.findByContact(contact)

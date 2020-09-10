@@ -9,20 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-public class ValidationFactory {
+public class MessageValidation {
 
     @Getter
     private final List<ErrorObject> errors = new ArrayList<>();
     private final MessageDTO messageDTO;
 
-    public ValidationFactory(MessageDTO messageDTO) {
+    public MessageValidation(MessageDTO messageDTO) {
         this.messageDTO = messageDTO;
         this.validateMessageType();
         if (haveNoErrors()) this.validateRecipient();
-    }
-
-    public boolean haveNoErrors(){
-        return (errors.size() == 0);
     }
 
     private List<ErrorObject> validateMessageType() {
@@ -42,5 +38,9 @@ public class ValidationFactory {
             errors.add(ErrorObject.builder().field("recipient").message("Destinatário inválido").build());
 
         return errors;
+    }
+
+    public boolean haveNoErrors(){
+        return (errors.size() == 0);
     }
 }
