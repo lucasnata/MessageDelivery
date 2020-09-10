@@ -8,7 +8,7 @@ Para compilação e execução da aplicação, são necessárias as ferramentas:
 - [Docker](https://docs.docker.com/get-docker/) e [Docker-Compose](https://docs.docker.com/compose/install/)
 
 ### Instruções
-
+Para rodar a aplicação ou a rotina de testes seguir os passos abaixo.
 Utilizando um terminal ou ferramenta de GIT, fazer uma cópia do repositório:
 ```
 git clone https://github.com/lucasnata/MessageDelivery.git 
@@ -33,6 +33,7 @@ A aplicação estará disponível na seguinte url:
 ```
 http://localhost:8080/message
 ```
+
 
 ### Endpoints disponíveis
 
