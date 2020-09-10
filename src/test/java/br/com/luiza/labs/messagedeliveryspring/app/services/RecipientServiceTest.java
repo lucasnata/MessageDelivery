@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 class RecipientServiceTest {
 
@@ -24,7 +26,9 @@ class RecipientServiceTest {
 
     @Test
     void shouldAddRecipient() {
-        when(this.recipientRepository.findByContact(email))
-                .thenReturn(Optional.of(Recipient.builder().contact(email).type(MessageType.EMAIL).build()));
+        final var contact = "emiail@me.com";
+        when(this.recipientRepository.findByContact(contact)).thenReturn(Optional.of(Recipient.builder().build()));
+        Optional<Recipient> recipient = this.recipientService.addRecipient(contact, MessageType.EMAIL);
+        assertTrue(recipient.isPresent());
     }
 }

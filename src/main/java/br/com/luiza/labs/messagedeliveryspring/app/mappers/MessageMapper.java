@@ -6,13 +6,11 @@ import br.com.luiza.labs.messagedeliveryspring.domain.entities.Message;
 import br.com.luiza.labs.messagedeliveryspring.domain.entities.Recipient;
 import br.com.luiza.labs.messagedeliveryspring.domain.vos.MessageStatus;
 import br.com.luiza.labs.messagedeliveryspring.domain.vos.MessageType;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import java.util.Calendar;
-import java.util.Optional;
 
 public class MessageMapper {
-    public static Message messageDTOtoEntity(MessageDTO messageDTO, Recipient recipient) {
+    public static Message messageDTOtoEntity(final MessageDTO messageDTO, final Recipient recipient) {
         return Message.builder()
                 .dateTimeSchedule(messageDTO.getDateTimeSchedule())
                 .recipient(recipient)
@@ -23,7 +21,7 @@ public class MessageMapper {
                 .build();
     }
 
-    public static MessageDTO messageEntitytoDTO(Message message) {
+    public static MessageDTO messageEntitytoDTO(final Message message) {
         return new MessageDTO(
                 message.getDateTimeSchedule(),
                 message.getRecipient().getContact(),
@@ -32,7 +30,7 @@ public class MessageMapper {
         );
     }
 
-    public static MessageStatusDTO messageEntitytoMessageStatusDTO(Message message) {
+    public static MessageStatusDTO messageEntitytoMessageStatusDTO(final Message message) {
         return MessageStatusDTO.builder().id(message.getId()).status(message.getMessageStatus()).build();
     }
 }

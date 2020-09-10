@@ -15,7 +15,7 @@ public class MessageValidation {
     private final List<ErrorObject> errors = new ArrayList<>();
     private final MessageDTO messageDTO;
 
-    public MessageValidation(MessageDTO messageDTO) {
+    public MessageValidation(final MessageDTO messageDTO) {
         this.messageDTO = messageDTO;
         this.validateMessageType();
         if (haveNoErrors()) this.validateRecipient();

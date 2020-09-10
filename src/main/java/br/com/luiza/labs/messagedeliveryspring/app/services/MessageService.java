@@ -29,7 +29,7 @@ public class MessageService implements IMessageService{
                 .addRecipient(messageDTO.getRecipient(), MessageType.valueOf(messageDTO.getMessageType()))
                 .map(recipient -> MessageMapper.messageDTOtoEntity(messageDTO, recipient))
                 .map(this.messageRepository::save);
-        this.rabbitMQSender.send(optMessage.get());
+        optMessage.ifPresent(rabbitMQSender::send);
         return optMessage;
     }
 
@@ -48,7 +48,7 @@ public class MessageService implements IMessageService{
                     return message;
                 })
                 .map(messageRepository::save);
-        this.rabbitMQSender.send(optMessage.get());
+        optMessage.ifPresent(rabbitMQSender::send);
         return optMessage;
     }
 }

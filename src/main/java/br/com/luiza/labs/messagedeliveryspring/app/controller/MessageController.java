@@ -30,7 +30,7 @@ public class MessageController extends GenericController{
     static final String PATH = "/message";
 
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Serializable> addMessage(@RequestBody @Valid MessageDTO messageDTO, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<Serializable> addMessage(@RequestBody @Valid final MessageDTO messageDTO, final UriComponentsBuilder uriComponentsBuilder) {
         MessageValidation messageValidation = new MessageValidation(messageDTO);
         if (messageValidation.haveNoErrors()) {
             return messageService.addMessage(messageDTO)
@@ -44,7 +44,7 @@ public class MessageController extends GenericController{
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE, value = "/{id}/status")
-    public ResponseEntity<MessageStatusDTO> getMessage(@PathVariable BigInteger id) {
+    public ResponseEntity<MessageStatusDTO> getMessage(@PathVariable final BigInteger id) {
         return messageService.getMessage(id)
                 .map(m -> MessageMapper.messageEntitytoMessageStatusDTO(m))
                 .map(this::okResponse)
@@ -52,7 +52,7 @@ public class MessageController extends GenericController{
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<MessageStatusDTO> deleteMessage(@PathVariable BigInteger id) {
+    public ResponseEntity<MessageStatusDTO> deleteMessage(@PathVariable final BigInteger id) {
         return messageService.deleteMessage(id)
                 .map(m -> MessageMapper.messageEntitytoMessageStatusDTO(m))
                 .map(this::okResponse)

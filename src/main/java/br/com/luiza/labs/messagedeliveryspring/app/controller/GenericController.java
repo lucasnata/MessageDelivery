@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.List;
 
 public abstract class GenericController {
-    ResponseEntity<MessageStatusDTO> okResponse(MessageStatusDTO messageDTO) { return ResponseEntity.ok(messageDTO);}
+    ResponseEntity<MessageStatusDTO> okResponse(final MessageStatusDTO messageDTO) { return ResponseEntity.ok(messageDTO);}
     ResponseEntity<MessageStatusDTO> notFoundResponse() {return ResponseEntity.notFound().build();}
     ResponseEntity<Serializable> createdResponse(final URI uri) {return ResponseEntity.created(uri).build();}
     ResponseEntity<Serializable> badRequestResponse(final List<ErrorObject> errors) {

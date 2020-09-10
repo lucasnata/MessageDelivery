@@ -10,24 +10,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 class MessageServiceTest {
 
     MessageRepository messageRepository;
-    RecipientService recipientService;
-    MessageService messageService;
-    RabbitMQSender rabbitMQSender;
+    IRecipientService recipientService;
+    IMessageService messageService;
+    IRabbitMQSender rabbitMQSender;
 
     final String email = "meu@email.com";
     final BigInteger id = new BigInteger("2");
@@ -36,6 +33,7 @@ class MessageServiceTest {
     void setUp() {
         this.messageRepository = spy(MessageRepository.class);
         this.recipientService = mock(RecipientService.class);
+        this.rabbitMQSender = mock(RabbitMQSender.class);
         this.messageService = new MessageService(this.messageRepository, this.recipientService, this.rabbitMQSender);
     }
 
@@ -46,33 +44,6 @@ class MessageServiceTest {
         Message message = this.messageService.addMessage(MessageDTO.builder().recipient(email).messageType(MessageType.EMAIL.name()).build()).get();
         verify(this.messageRepository, Mockito.times(1)).save(any(Message.class));
         assertEquals(message.getId(), id);
-    }
-
-    @Test
-    void shouldGetMessageAndReturnStatus() {
-        when(this.messageRepository.findByMessageStatus(MessageStatus.SCHEDULED))
-            .thenReturn(Arrays.asList(
-                Message.builder().id(id)
-                    .dateTimeSchedule(Calendar.getInstance())
-                    .recipient(Recipient.builder().contact(email).type(MessageType.EMAIL).build())
-                    .message("minha mensagem")
-                    .messageStatus(MessageStatus.SCHEDULED)
-                    .messageType(MessageType.EMAIL)
-                    .build()));
-
-        Optional<Message> optionalMessage = this.messageService.getMessage(this.id);
-
-        if (optionalMessage.isPresent()) {
-            final Message message = optionalMessage.get();
-
-            verify(this.messageRepository, times(1)).findByMessageStatus(MessageStatus.SCHEDULED);
-            assertNotNull(message);
-            assertEquals(this.email, message.getRecipient());
-            assertEquals(MessageType.EMAIL.name(), message.getMessageType().name());
-            assertEquals(MessageStatus.SCHEDULED.name(), message.getMessageType().name());
-        } else {
-            assertTrue(false);
-        }
     }
 
     @Test
@@ -102,8 +73,10 @@ class MessageServiceTest {
 
     @Test
     void getMessages() {
-        this.recipientService.addRecipient(email, MessageType.EMAIL);
-        Message message = this.messageRepository.save(any(Message.class));
-        when(this.messageRepository.findByMessageStatus(MessageStatus.SCHEDULED)).thenReturn(Arrays.asList(message));
+        when(this.recipientService.addRecipient(email, MessageType.EMAIL)).thenReturn(Optional.of(Recipient.builder().contact(email).build()));
+        when(this.messageRepository.save(any(Message.class))).thenReturn(Message.builder().id(id).build());
+        Message message = this.messageService.addMessage(MessageDTO.builder().recipient(email).messageType(MessageType.EMAIL.name()).build()).get();
+        verify(this.messageRepository, Mockito.times(1)).save(any(Message.class));
+        assertEquals(message.getId(), id);
     }
 }

@@ -17,16 +17,16 @@ public class RecipientService implements IRecipientService{
 
     private final RecipientRepository recipientRepository;
 
-    public Optional<Recipient> addRecipient(String contact, MessageType type){
+    public Optional<Recipient> addRecipient(final String contact, final MessageType type){
         return this.recipientRepository.findByContact(contact)
             .or(() -> this.saveRecipient(contact, type));
     }
 
-    private Optional<Recipient> saveRecipient(String contact, MessageType type) {
+    private Optional<Recipient> saveRecipient(final String contact, final MessageType type) {
         return Optional.of(this.recipientRepository.save(instanceOfRecipient(contact, type)));
     }
 
-    private Recipient instanceOfRecipient(String contact, MessageType type) {
+    private Recipient instanceOfRecipient(final String contact, final MessageType type) {
         return new Recipient(contact, type);
     }
 }

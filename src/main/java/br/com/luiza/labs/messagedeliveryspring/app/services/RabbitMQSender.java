@@ -1,25 +1,28 @@
 package br.com.luiza.labs.messagedeliveryspring.app.services;
 
 import br.com.luiza.labs.messagedeliveryspring.domain.entities.Message;
-import lombok.AllArgsConstructor;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RabbitMQSender implements IRabbitMQSender{
+class RabbitMQSender implements IRabbitMQSender{
+
+    private final AmqpTemplate rabbitTemplate;
+    private final String exchange;
+    private final String routingkey;
 
     @Autowired
-    AmqpTemplate rabbitTemplate;
+    RabbitMQSender(final AmqpTemplate rabbitTemplate,
+                   @Value("${message.rabbitmq.routingkey}") final String routingkey,
+                   @Value("${message.rabbitmq.exchange}") final String exchange){
+        this.rabbitTemplate = rabbitTemplate;
+        this.exchange = exchange;
+        this.routingkey = routingkey;
+    }
 
-    @Value("${message.rabbitmq.exchange}")
-    private String exchange;
-
-    @Value("${message.rabbitmq.routingkey}")
-    private String routingkey;
-
-    public void send(Message message) {
+    public void send(final Message message) {
         rabbitTemplate.convertAndSend(exchange, routingkey, message);
     }
 }

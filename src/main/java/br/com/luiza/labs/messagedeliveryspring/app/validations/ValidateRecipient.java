@@ -25,15 +25,15 @@ public class ValidateRecipient implements IValidate {
         }
     }
 
-    private boolean pushIsValid(String recipient) {
+    private boolean pushIsValid(final String recipient) {
         return true;
     }
 
-    private boolean mobileNumberIsValid(String recipient) {
+    private boolean mobileNumberIsValid(final String recipient) {
         return Pattern.compile("\\d+").matcher(recipient).matches() && (recipient.length() > 10);
     }
 
-    private boolean emailIsValid(String recipient) {
+    private boolean emailIsValid(final String recipient) {
         return Pattern.compile("^(.+)@(.+)$").matcher(recipient).matches();
     }
 }
